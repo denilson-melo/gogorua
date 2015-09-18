@@ -2,9 +2,11 @@
 #define JOGADOR_H
 
 #include "main.h"
+#include <time.h>
 
 void desenhaJogador();
 void desenhaVida();
+
 
 class Jogador {
 public:
@@ -18,7 +20,11 @@ public:
 	GLint maxX;					//Limite máximo da posição X do jogador
 	GLint maxY;					//Limite máximo da poxição Y do jogador
 	GLuint vidas;				//Quantidade de vidas
-	
+	GLint vidaX;
+	GLint vidaY;
+	GLfloat spawnVidaTime;
+	GLfloat spawnVidaInterval = 5000;
+	int vidaSpawned = 0;
 	//Construtor
 	Jogador() {
 		velocidadeY = 30;
@@ -30,6 +36,7 @@ public:
 		maxX = 195;
 		maxY = 200;
 		vidas = 3;
+		srand(time(NULL));
 	}
 
 	//Função chamada quando o jogo é reiniciado
@@ -46,6 +53,28 @@ public:
 		vidas = 3;
 	}
 
+	//Cria vida para o jogador pegar
+	//Se sim outra vida aparece
+	int vidaSpawn() {
+		//Verifica se o tempo atual é maior que o tempo do aparecimento da ultima vida + o intervalo para aparecer outra
+		if (glutGet(GLUT_ELAPSED_TIME) > spawnVidaTime + spawnVidaInterval && vidas<10) {
+			//Posições Y possíveis para a vida aparecer
+			int spawnY[] = { -143, -113, -83, -53, -23, 3, 33, 63, 93, 123 };
+			int aleatorio = rand() % 10;
+			//Sorteia uma posição X válida para a vida aprecer
+			vidaX = 15*(rand()%21-10);
+			//Sorteia uma posição Y válida para a vida aprecer
+			vidaY = spawnY[aleatorio];
+			//Diz que a vida pode aparecer
+			vidaSpawned = 1;
+			//Define quando a próxima vida irá aparecer, após no mínimo 5 segundos ou um máximo de 20
+			spawnVidaTime = glutGet(GLUT_ELAPSED_TIME);
+			spawnVidaInterval = 1000 * (rand() % 15 + 5);
+			return 1;
+		}
+		return 0;
+	}
+
 	//Chamado pelo loop principal do jogo, quando estiver no estado PLAYING
 	//Função que exibe os modelos do jogador e das vidas na tela
 	void desenha() {
@@ -56,6 +85,21 @@ public:
 			glTranslated(posX, posY, 0.0);
 			desenhaJogador();
 			glPopMatrix();
+
+			//Chama o controle do aparecimento da vida
+			vidaSpawn();
+
+			//Se há vida na tela, desenha e verifica se o jogador pegou
+			if (vidaSpawned) {
+				glPushMatrix();
+				glTranslated(vidaX, vidaY, 0);
+					desenhaVida();
+					if (colisao(posX, posY, 11.65 - 0.57, 15.75 - 0.66, vidaX, vidaY, 10, 5) ) {
+						vidaSpawned = false;
+						vidas++;
+					}
+				glPopMatrix();
+			}
 
 			//Desenha vidas, começando da posição X -190, e incrementando em passos de 30
 			//De início desenha 3 vidas no canto inferior esquerdo da tela
@@ -110,6 +154,7 @@ public:
 		if (posY >= 165) { //Caso tenha alcançado a água
 			venceu();
 		}
+		printf("PosX: %f, PosY: %f\n", posX, posY);
 	}
 
 	//Chamado quando o jogador chega na posição Y da água

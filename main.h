@@ -18,7 +18,7 @@ void Desenha();			//Função principal da execução do jogo
 void desenhaCalcadas();			//Desenhas as calçadas
 void desenhaQuad(int, int);		//Desenha um quad genérico
 
-int clock = 10;			//Parâmetro que controla o framerate
+int rate = 10;			//Parâmetro que controla o framerate
 int estado = MENU;		//Variável que representa o estado atual do jogo
 
 

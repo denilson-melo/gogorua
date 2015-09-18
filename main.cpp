@@ -11,7 +11,7 @@
 
 //Função que limita o framerate
 void clocker(int v){
-	glutTimerFunc(clock,clocker,0);
+	glutTimerFunc(rate,clocker,0);
 	glutPostRedisplay();
 }
 
@@ -143,11 +143,11 @@ void Update(void){
 		break;
 	case VENCEU:
 		Desenha();
-		clock = 2;
+		rate = 2;
 		break;
 	case GAMEOVER:
 		Desenha();
-		clock = 2;
+		rate = 2;
 		break;
 	case TUTORIAL:
 		tutorial.desenha();
@@ -158,7 +158,7 @@ void Update(void){
 //Função chamada para reinicializar o jogo
 //Restaura a velocidade de execução, a posição do jogador, e colocar o estado para PLAYING
 void Reiniciar() {
-	clock = 10;
+	rate = 10;
 	jogador.Reset();
 	estado = PLAYING;
 }
