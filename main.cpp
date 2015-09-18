@@ -1,12 +1,12 @@
 //gcc -o main main.cpp -lglu32 -lopengl32 -lglut32 -m32
-#include <windows.h>
+//#include <windows.h>
 #include <stdio.h>
 #include <stdlib.h> 
 #include <GL/glut.h> 
 #include "Jogador.h"
 #include "Menus.h"
 #include "Pista.h"
-
+#include <string.h>
 
 
 //Função que limita o framerate
